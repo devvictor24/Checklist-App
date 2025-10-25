@@ -2,17 +2,21 @@ package syeknom.Checklist.controller;
 
 import syeknom.Checklist.model.Category;
 import syeknom.Checklist.service.CategoryService;
-import syeknom.Checklist.dto.CategoryCreateDTO; // Para a entrada (POST)
-import syeknom.Checklist.dto.CategoryResponseDTO; // Para a saída (GET e POST)
+import syeknom.Checklist.dto.CategoryCreateDTO;
+import syeknom.Checklist.dto.CategoryResponseDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.util.List;
-import java.util.stream.Collectors; // Para mapear listas de DTOs
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -21,44 +25,41 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // Use injeção via construtor, é a melhor prática no Spring
     @Autowired
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
     // -------------------------------------------------------------------------
-
-    // POST /api/categories - CRIA UMA NOVA CATEGORIA
-    // O retorno agora é um DTO de Resposta (sem a lista de Tasks)
+    @Operation(summary = "Cria uma nova categoria",
+            description = "Cria uma categoria com nome e descrição informados no corpo da requisição.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Categoria criada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryCreateDTO dto) {
 
-        // 1. Converte DTO de Criação (entrada) para a Entity
-        // Presume que Category.java tem o construtor: public Category(String name, String description)
         Category newCategory = new Category(dto.getName(), dto.getDescription());
-
-        // 2. Salva a Entity no banco de dados
         Category savedCategory = categoryService.save(newCategory);
-
-        // 3. Converte a Entity salva para o DTO de Resposta (saída)
         CategoryResponseDTO responseDTO = new CategoryResponseDTO(savedCategory);
 
-        // Retorna 201 Created com o DTO
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     // -------------------------------------------------------------------------
-
-    // GET /api/categories - LISTA TODAS AS CATEGORIAS
-    // O retorno agora é uma lista de DTOs de Resposta
+    @Operation(summary = "Lista todas as categorias",
+            description = "Retorna uma lista de todas as categorias cadastradas no sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
 
-        // Busca todas as Entities
         List<Category> categories = categoryService.findAll();
 
-        // Mapeia (converte) a lista de Entities para uma lista de DTOs
         List<CategoryResponseDTO> responseList = categories.stream()
                 .map(CategoryResponseDTO::new)
                 .collect(Collectors.toList());
@@ -67,32 +68,36 @@ public class CategoryController {
     }
 
     // -------------------------------------------------------------------------
-
-    // GET /api/categories/{id} - BUSCA UMA CATEGORIA PELO ID
-    // O retorno agora é um DTO de Resposta
+    @Operation(summary = "Busca uma categoria pelo ID",
+            description = "Retorna os dados de uma categoria existente, informando o ID no caminho da requisição.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Categoria encontrada"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Long id) {
 
         return categoryService.findById(id)
-                // Se encontrar, mapeia para o DTO de Resposta e retorna 200 OK
                 .map(CategoryResponseDTO::new)
                 .map(ResponseEntity::ok)
-                // Se não encontrar, retorna 404 Not Found
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // -------------------------------------------------------------------------
-
-    // DELETE /api/categories/{id} - EXCLUI UMA CATEGORIA
+    @Operation(summary = "Exclui uma categoria pelo ID",
+            description = "Remove uma categoria existente com base no ID informado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Categoria excluída com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
 
         if (categoryService.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        categoryService.deleteById(id);
 
-        // Retorna 204 No Content
+        categoryService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
