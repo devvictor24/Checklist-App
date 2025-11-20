@@ -87,4 +87,15 @@ class CategoryControllerTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+    
+    @Test
+    void deveRetornarNoContentAoDeletarCategoriaExistente() {
+        when(categoryService.findById(1L)).thenReturn(Optional.of(category));
+        doNothing().when(categoryService).deleteById(1L);
+
+        ResponseEntity<Void> response = categoryController.deleteCategory(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(categoryService, times(1)).deleteById(1L);
+    }
 }

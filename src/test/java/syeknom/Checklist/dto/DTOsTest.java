@@ -47,4 +47,31 @@ class DTOsTest {
         assertEquals(1, dto.getPriority());
         assertEquals(1L, dto.getCategoryID());
     }
+    
+    @Test
+    void deveTestarTaskResponseDTOComConstrutorCompleto() {
+        LocalDate dueDate = LocalDate.of(2024, 12, 31);
+        TaskResponseDTO dto = new TaskResponseDTO(1L, "Tarefa Teste", "Descrição teste", 
+            dueDate, "PENDING", 2, "Trabalho");
+        
+        assertEquals(1L, dto.getId());
+        assertEquals("Tarefa Teste", dto.getTitle());
+        assertEquals("Descrição teste", dto.getDescription());
+        assertEquals(dueDate, dto.getDueDate());
+        assertEquals("PENDING", dto.getStatus());
+        assertEquals(2, dto.getPriority());
+        assertEquals("Trabalho", dto.getCategoryName());
+    }
+
+    @Test
+    void deveTestarCategoryResponseDTOComConstrutorVazio() {
+        CategoryResponseDTO dto = new CategoryResponseDTO();
+        dto.setId(1L);
+        dto.setName("Categoria Teste");
+        dto.setDescription("Descrição teste");
+        
+        assertEquals(1L, dto.getId());
+        assertEquals("Categoria Teste", dto.getName());
+        assertEquals("Descrição teste", dto.getDescription());
+    }
 }

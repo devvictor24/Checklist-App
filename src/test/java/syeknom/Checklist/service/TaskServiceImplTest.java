@@ -116,4 +116,69 @@ class TaskServiceImplTest {
             taskService.getById(99L);
         });
     }
+    
+    
+    @Test
+    void update_DeveRetornarTaskAtualizada() {
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(taskRepository.save(any(Task.class))).thenReturn(task);
+
+        TaskResponseDTO result = taskService.update(1L, taskCreateDTO);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void update_QuandoTaskNaoEncontrada_DeveLancarExcecao() {
+        when(taskRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            taskService.update(99L, taskCreateDTO);
+        });
+    }
+
+    @Test
+    void patchStatus_DeveAtualizarStatus() {
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        when(taskRepository.save(any(Task.class))).thenReturn(task);
+
+        TaskResponseDTO result = taskService.patchStatus(1L, TaskStatus.IN_PROGRESS);
+
+        assertNotNull(result);
+        assertEquals(TaskStatus.IN_PROGRESS.name(), result.getStatus());
+    }
+
+    @Test
+    void delete_QuandoTaskExiste_DeveDeletar() {
+        when(taskRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(taskRepository).deleteById(1L);
+
+        taskService.delete(1L);
+
+        verify(taskRepository, times(1)).existsById(1L);
+        verify(taskRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void delete_QuandoTaskNaoExiste_DeveLancarExcecao() {
+        when(taskRepository.existsById(99L)).thenReturn(false);
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            taskService.delete(99L);
+        });
+    }
+
+    @Test
+    void findByStatus_DeveRetornarTasksFiltradas() {
+        List<Task> tasks = Arrays.asList(task);
+        when(taskRepository.findByStatus(TaskStatus.PENDING)).thenReturn(tasks);
+
+        List<TaskResponseDTO> result = taskService.findByStatus(TaskStatus.PENDING);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(TaskStatus.PENDING.name(), result.get(0).getStatus());
+    }
 }
