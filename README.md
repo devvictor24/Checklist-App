@@ -1,5 +1,6 @@
  # Aplicativo de Lista de Verificação 
- Este projeto é um aplicativo de lista de verificação desenvolvido usando Spring Boot. Ele fornece uma API RESTful para gerenciar categorias e tarefas. 4 5 ## Tecnologias Utilizadas 
+ Este projeto é um aplicativo de lista de verificação desenvolvido usando Spring Boot. Ele fornece uma API RESTful para gerenciar categorias e tarefas.
+ ## Tecnologias Utilizadas 
  * Spring Boot: Framework para construir aplicações Spring independentes e prontas para produção.
  *  Spring Data JPA: Para acesso e persistência de dados com Hibernate.
  *   Banco de Dados H2: Um banco de dados em memória usado para desenvolvimento e testes. (Poderia ser substituído por outros bancos de dados como PostgreSQL, MySQL, etc.)
