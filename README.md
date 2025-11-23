@@ -1,60 +1,44 @@
-  1 # Checklist-App
-    2 
-    3 This project is a Checklist application developed using Spring Boot. It provides a RESTful API for managing categories and tasks.
-    4 
-    5 ## Technologies Used
-    6 
-    7 *   **Spring Boot**: Framework for building stand-alone, production-grade Spring-based Applications.
-    8 *   **Spring Data JPA**: For data access and persistence with Hibernate.
-    9 *   **H2 Database**: An in-memory database used for development and testing. (Could be replaced with other databases like PostgreSQL, MySQL, etc.)
-   10 *   **Maven**: Dependency management and build automation tool.
-   11 *   **Java 17**: Programming language version.
-   12 
-   13 ## Project Structure
-   14 
-   15 The project follows a standard Spring Boot application structure:
-   16 
-   17 *   `syeknom.Checklist.controller`: Handles incoming HTTP requests and returns responses.
-   18 *   `syeknom.Checklist.service`: Contains the business logic of the application.
-   19 *   `syeknom.Checklist.repository`: Provides interfaces for data access operations.
-   20 *   `syeknom.Checklist.model`: Defines the data models (entities).
-   21 *   `syeknom.Checklist.dto`: Data Transfer Objects for request and response bodies.
-   22 *   `syeknom.Checklist.exception`: Global exception handling.
-   23 
-   24 ## Setup and Installation
-   25 
-   26 1.  **Clone the repository:**
-      git clone <repository-url>
-      cd Checklist-App-master
-   1 
-   2 2.  **Navigate to the application directory:**
-      cd Checklist-App
+ # Aplicativo de Lista de Verificação 
+ Este projeto é um aplicativo de lista de verificação desenvolvido usando Spring Boot. Ele fornece uma API RESTful para gerenciar categorias e tarefas. 4 5 ## Tecnologias Utilizadas 
+ * Spring Boot: Framework para construir aplicações Spring independentes e prontas para produção.
+ *  Spring Data JPA: Para acesso e persistência de dados com Hibernate.
+ *   Banco de Dados H2: Um banco de dados em memória usado para desenvolvimento e testes. (Poderia ser substituído por outros bancos de dados como PostgreSQL, MySQL, etc.)
+ *    * Maven: Ferramenta de gerenciamento de dependências e automação de builds.
+*  * Java 17: Versão da linguagem de programação.
+*  ## Estrutura do Projeto
+*   O projeto segue uma estrutura padrão de aplicação Spring Boot:
+* syeknom.Checklist.controller: Lida com requisições HTTP recebidas e retorna respostas.
+* * syeknom.Checklist.service: Contém a lógica de negócios da aplicação.
+*  * syeknom.Checklist.repository: Fornece interfaces para operações de acesso a dados.
+*  * syeknom.Checklist.model: Define os modelos de dados (entidades).
+*  * syeknom.Checklist.dto: Objetos de Transferência de Dados para corpos de requisição e resposta.
+*  * ​​syeknom.Checklist.exception: Tratamento global de exceções.
+*  ## Configuração e Instalação
+*  . Clone o repositório: git clone cd Checklist-App-master
+*  . Navegue até o diretório do aplicativo: cd Checklist-App
 
-   1 
-   2 3.  **Build the project using Maven:**
-      ./mvnw clean install
-   1 
-   2 ## How to Run
-   3 
-   4 1.  **Run the Spring Boot application:**
-      ./mvnw spring-boot:run
+ Compile o projeto usando o Maven: ./mvnw clean install 
+ ## Como Executar
+ . Execute o aplicativo Spring Boot: ./mvnw spring-boot:run
 
-    1 
-    2 2.  The application will start on port 8080 by default. You can access the API endpoints at `http://localhost:8080`.
-    3 
-    4 ## API Endpoints (Examples)
-    5 
-    6 *   **Categories:**
-    7     *   `GET /api/categories`: Get all categories.
-    8     *   `POST /api/categories`: Create a new category.
-    9     *   `GET /api/categories/{id}`: Get a category by ID.
-   10     *   `PUT /api/categories/{id}`: Update a category.
-   11     *   `DELETE /api/categories/{id}`: Delete a category.
-   12 
-   13 *   **Tasks:**
-   14     *   `GET /api/tasks`: Get all tasks.
-   15     *   `POST /api/tasks`: Create a new task.
-   16     *   `GET /api/tasks/{id}`: Get a task by ID.
-   17     *   `PUT /api/tasks/{id}`: Update a task.
-   18     *   `DELETE /api/tasks/{id}`: Delete a task.
-   19     *   `PATCH /api/tasks/{id}/status`: Update the status of a task
+ O aplicativo será iniciado na porta 8080 por padrão. Você pode acessar os endpoints da API em `http://localhost:8080`.
+
+
+ ## Endpoints da API (Exemplos)
+
+* **Categorias:**
+ * `GET /api/categories`: Obter todas as categorias.
+
+ * `POST /api/categories`: Criar uma nova categoria.
+
+ * `GET /api/categories/{id}`: Obter uma categoria por ID.
+
+ * PUT /api/categories/{id}: Atualizar uma categoria.
+ *  * DELETE /api/categories/{id}: Excluir uma categoria.
+    *  * Tarefas:
+*  * GET /api/tasks: Obter todas as tarefas.
+* * POST /api/tasks: Criar uma nova tarefa.
+*  * GET /api/tasks/{id}: Obter uma tarefa por ID.
+*  * PUT /api/tasks/{id}: Atualiza uma tarefa.
+*  * DELETE /api/tasks/{id}: Exclui uma tarefa.
+* * PATCH /api/tasks/{id}/status: Atualiza o status de uma tarefa.
