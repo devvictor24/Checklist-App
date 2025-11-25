@@ -42,17 +42,27 @@ public class TaskServiceImpl implements TaskService {
         t.setStatus(TaskStatus.PENDING);
 
         Task saved = taskRepository.save(t);
-        return toResponse(saved);
+
+        if (dto.getRelatedTaskIds() != null && !dto.getRelatedTaskIds().isEmpty()) {
+            dto.getRelatedTaskIds().forEach(relatedId -> {
+                Task relatedTask = taskRepository.findById(relatedId)
+                        .orElseThrow(() -> new EntityNotFoundException("Tarefa relacionada com ID " + relatedId + " não encontrada"));
+                saved.getRelatedTasks().add(relatedTask);
+                relatedTask.getRelatedTasks().add(saved);
+            });
+        }
+        // No need to save again, transaction will handle it
+        return new TaskResponseDTO(saved);
     }
 
     @Override
     public List<TaskResponseDTO> listAll() {
-        return taskRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+        return taskRepository.findAll().stream().map(TaskResponseDTO::new).collect(Collectors.toList());
     }
 
     @Override
     public TaskResponseDTO getById(Long id) {
-        return taskRepository.findById(id).map(this::toResponse)
+        return taskRepository.findById(id).map(TaskResponseDTO::new)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não encontrada"));
     }
 
@@ -69,7 +79,7 @@ public class TaskServiceImpl implements TaskService {
         task.setPriority(dto.getPriority());
         task.setCategory(category);
 
-        return toResponse(taskRepository.save(task));
+        return new TaskResponseDTO(taskRepository.save(task));
     }
 
     @Override
@@ -77,7 +87,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não encontrada"));
         task.setStatus(status);
-        return toResponse(taskRepository.save(task));
+        return new TaskResponseDTO(taskRepository.save(task));
     }
 
     @Override
@@ -90,12 +100,22 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskResponseDTO> findByStatus(TaskStatus status) {
-        return taskRepository.findByStatus(status).stream().map(this::toResponse).collect(Collectors.toList());
+        return taskRepository.findByStatus(status).stream().map(TaskResponseDTO::new).collect(Collectors.toList());
     }
 
-    private TaskResponseDTO toResponse(Task t) {
-        String catName = t.getCategory() != null ? t.getCategory().getName() : null;
-        return new TaskResponseDTO(t.getId(), t.getTitle(), t.getDescription(),
-                t.getDueDate(), t.getStatus().name(), t.getPriority(), catName);
+    @Override
+    public TaskResponseDTO linkTask(Long taskId, Long relatedTaskId) {
+        if (taskId.equals(relatedTaskId)) {
+            throw new IllegalArgumentException("Uma tarefa não pode ser associada a ela mesma.");
+        }
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Tarefa com ID " + taskId + " não encontrada"));
+        Task relatedTask = taskRepository.findById(relatedTaskId)
+                .orElseThrow(() -> new EntityNotFoundException("Tarefa relacionada com ID " + relatedTaskId + " não encontrada"));
+
+        task.getRelatedTasks().add(relatedTask);
+        relatedTask.getRelatedTasks().add(task);
+
+        return new TaskResponseDTO(task);
     }
 }
