@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class TaskCreateDTO {
 
     @NotBlank(message = "Titulo obrigatorio")
-    @Size(min = 3, max = 2000)
+    @Size(min = 3, max = 1000)
     private String title;
 
     @Size(max = 1000)
